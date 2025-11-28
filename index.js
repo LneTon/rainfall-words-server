@@ -43,11 +43,11 @@ app.post("/generate-image", async (req, res) =>
             });
 
         const data = await response.json();
-        console.log("debug from DEEPAI:", data);
+        console.log("debug from DEEPAI:", process.env.DEEPAI_KEY);
 
         if (!data.output_url) 
         {
-          console.error("DEEPAI ERRROR:", data);
+          console.error("DEEPAI ERROR:", data);
           return res.status(500).json({ error: "DEEP FAILED" });
         }
         res.json({
