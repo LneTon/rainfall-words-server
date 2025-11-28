@@ -36,17 +36,19 @@ app.post("/generate-image", async (req, res) =>
                 method: "POST",
                 headers: 
                 {
-                    "api-key": process.env.DEEPAI_KEY
+                    "api-key": process.env.DEEPAI_KEY,
+                    ...form.getHeaders()
                 },
                 body: form
             });
 
         const data = await response.json();
+        console.log("debug from DEEPAI:", data);
 
         if (!data.output_url) 
         {
-          console.error("DeepAI error:", data);
-          return res.status(500).json({ error: "DeepAI failed" });
+          console.error("DEEPAI ERRROR:", data);
+          return res.status(500).json({ error: "DEEP FAILED" });
         }
         res.json({
           type: "image",
