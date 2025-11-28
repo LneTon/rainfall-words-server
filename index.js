@@ -13,7 +13,8 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "api-key"]
 }));
 
-app.options("*", cors());
+app.options("/generate-image", cors());
+app.options("/api/rainfall", cors());
 
 app.use(express.json());
 
