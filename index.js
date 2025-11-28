@@ -61,7 +61,6 @@ app.post("/generate-image", async (req, res) =>
 });
 
 const PORT = process.env.PORT;
-if (!PORT) throw new Error("Railway PORT not set");
 
 app.listen(PORT, () => 
 {
