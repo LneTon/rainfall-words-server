@@ -117,5 +117,6 @@ app.get("/api/rainfall", async (req, res) =>
             console.error("Rainfall error:", err);
             res.status(500).json({ error: "Rainfall API failed" });
     }
+    
 });
 
