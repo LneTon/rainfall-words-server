@@ -13,6 +13,8 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "api-key"]
 }));
 
+app.options("*", cors());
+
 app.use(express.json());
 
 app.post("/generate-image", async (req, res) => 
