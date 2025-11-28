@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+// import FormData from "form-data";
 
 dotenv.config();
 
@@ -17,37 +18,46 @@ app.options("/api/rainfall", cors());
 
 app.use(express.json());
 
-app.post("/generate-image", async (req, res) => {
-  try {
-    const { word } = req.body;
+app.post("/generate-image", async (req, res) => 
+{ 
+    try 
+    {
+        const { word } = req.body;
+        const prompt = `Create an ultra-detailed, high-impact image interpreting the phrase 
+        "Rainfall ${word}" as literally and absurdly as possible. Show ${word} in a dramatic, hyperreal, cinematic scene. 
+        Use vibrant colors, exaggerated forms, dream-like atmosphere, impossible physics, 
+        and photorealistic textures. The concept should be bold, absurd, whimsical, unexpected and visually striking`;
+        
+       const form = new FormData();
+       form.append("text", prompt);
 
-    const prompt = `Create an ultra-detailed, high-impact image interpreting the phrase 
-    "Rainfall ${word}" as literally and absurdly as possible.`
+        const response = await fetch("https://api.deepai.org/api/text2img", 
+            {
+                method: "POST",
+                headers: 
+                {
+                    "api-key": process.env.DEEPAI_KEY,
+                },
+                body: form
+            });
 
-    const form = new FormData();
-    form.append("text", prompt);
+        const data = await response.json();
 
-    const response = await fetch("https://api.deepai.org/api/text2img", {
-      method: "POST",
-      headers: {
-        "api-key": process.env.DEEPAI_KEY
-      },
-      body: form
-    });
-
-    const data = await response.json();
-    console.log("DeepAI reply:", data);
-
-    if (!data.output_url) {
-      return res.status(500).json({ error: "DeepAI rejected request", detail: data });
+        if (!data.output_url) 
+        {
+          console.error("DEEPAI ERROR:", data);
+          return res.status(500).json({ error: "DEEP FAILED" });
+        }
+        res.json({
+          type: "image",
+          url: data.output_url
+        });
+    } 
+    catch (error) 
+    {
+      console.error("Server error:", error);
+      res.status(500).json({ error: "Server error" });
     }
-
-    res.json({ type: "image", url: data.output_url });
-
-  } catch (err) {
-    console.error("SERVER ERROR:", err);
-    res.status(500).json({ error: err.message });
-  }
 });
 
 const PORT = process.env.PORT;
