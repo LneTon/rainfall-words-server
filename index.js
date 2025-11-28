@@ -1,10 +1,18 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import FormData from "form-data";
+
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+app.use(cors({
+  origin: "https://rainfall-word.vercel.app",
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type", "api-key"]
+}));
+
 app.use(express.json());
 
 app.post("/generate-image", async (req, res) => 
@@ -17,16 +25,19 @@ app.post("/generate-image", async (req, res) =>
         Use vibrant colors, exaggerated forms, dream-like atmosphere, impossible physics, 
         and photorealistic textures. The concept should be bold, absurd, whimsical, unexpected and visually striking`;
         
+       const form = new FormData();
+       form.append("text", prompt);
+
         const response = await fetch("https://api.deepai.org/api/text2img", 
-        {
-            method: "POST",
-            headers: 
             {
-                "api-key": process.env.DEEPAI_KEY,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ text: prompt })
-        });
+                method: "POST",
+                headers: 
+                {
+                    "api-key": process.env.DEEPAI_KEY
+                },
+                body: form
+            });
+
         const data = await response.json();
 
         if (!data.output_url) 
@@ -48,9 +59,8 @@ app.post("/generate-image", async (req, res) =>
 
 const PORT = process.env.PORT || 5001;
 
-app.listen(PORT, () => {
-  console.log("Server running on port:", PORT);
-});
+app.listen(PORT, () => {console.log ("Server running on port:", PORT);});
+
 
 app.get("/api/rainfall", async (req, res) => 
 {
